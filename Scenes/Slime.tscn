@@ -1,0 +1,111 @@
+[gd_scene load_steps=15 format=3 uid="uid://gp2hnhnoqv0u"]
+
+[ext_resource type="Script" path="res://Code/Slime.cs" id="1_6xjqd"]
+[ext_resource type="Texture2D" uid="uid://di7d8ysf184vs" path="res://Assets/sprites/slime_green.png" id="1_ntdu4"]
+[ext_resource type="Script" path="res://Code/State/StateMachine.cs" id="3_ahtjk"]
+[ext_resource type="Script" path="res://Code/State/MoveToPlayer.cs" id="4_s6n41"]
+[ext_resource type="Script" path="res://Code/State/Idle.cs" id="4_w28wr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6kam2"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nrn5w"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mwdwt"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wwxgq"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s23sh"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7o3j4"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_menpa"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6kam2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nrn5w")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mwdwt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wwxgq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s23sh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7o3j4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s23sh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wwxgq")
+}],
+"loop": true,
+"name": &"moving",
+"speed": 10.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8malq"]
+size = Vector2(11, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yhqej"]
+size = Vector2(167.75, 45)
+
+[node name="Slime" type="CharacterBody2D" node_paths=PackedStringArray("sprite")]
+script = ExtResource("1_6xjqd")
+sprite = NodePath("AnimatedSprite2D")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_menpa")
+animation = &"moving"
+autoplay = "idle"
+frame_progress = 0.403682
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 6)
+shape = SubResource("RectangleShape2D_8malq")
+
+[node name="StateMachine" type="Node2D" parent="."]
+script = ExtResource("3_ahtjk")
+initialState = NodePath("Idle")
+
+[node name="Idle" type="Node2D" parent="StateMachine" node_paths=PackedStringArray("enemy")]
+script = ExtResource("4_w28wr")
+enemy = NodePath("../..")
+
+[node name="MoveToPlayer" type="Node2D" parent="StateMachine" node_paths=PackedStringArray("enemy")]
+script = ExtResource("4_s6n41")
+enemy = NodePath("../..")
+
+[node name="PlayerCheck" type="Area2D" parent="."]
+collision_layer = 3
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerCheck"]
+position = Vector2(0, -12.5)
+shape = SubResource("RectangleShape2D_yhqej")
+
+[connection signal="body_entered" from="PlayerCheck" to="StateMachine/Idle" method="OnPlayerCheckBodyEntered"]
+[connection signal="body_exited" from="PlayerCheck" to="StateMachine/MoveToPlayer" method="OnPlayerCheckBodyExited"]
