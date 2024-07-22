@@ -31,6 +31,20 @@ public partial class MoveToPlayer : State
 
 			enemy.Velocity = velocity;
 			enemy.MoveAndSlide();
+			
+			///--------
+			// Transition to attack logic
+
+			if(enemy.GlobalPosition.DistanceTo(player.GlobalPosition) < 60f)
+			{
+				moveDirection = Vector2.Zero;
+				enemy.Velocity = Vector2.Zero;
+
+				stateMachine.TransitionTo("Attack");
+			}
+
+
+			// GD.Print("MoveTo. Distance: " + enemy.GlobalPosition.DistanceTo(player.GlobalPosition));
 		}
 	}
 

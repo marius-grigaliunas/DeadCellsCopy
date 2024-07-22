@@ -4,16 +4,65 @@ using System;
 public partial class Attack : State
 {
 	[Export] CharacterBody2D enemy;
-
+	[Export] float jumpForce = 100f;
 	Knight player;
+	[Export] Timer attackTimer;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
+	bool canAttack;
+
+    public override void Enter()
+    {
+        player = stateMachine.player;
+
+		if(enemy == null)
+		{
+			GD.PushError("Enemy refrence for MoveToPlayer state not set");
+			GetTree().Quit();
+		}
+
+		canAttack = true;
+    }
+
+    public override void _PhysicsProcess(double delta)
+	  {
+
+	  	if(player != null && stateMachine.currentState == "Attack")
+		  {
+			  Vector2 jumpDirection = (player.GlobalPosition - enemy.GlobalPosition).Normalized();
+
+			  Vector2 velocity = enemy.Velocity;
+
+			if(enemy.IsOnFloor() && canAttack)
+			{
+				canAttack = false;
+				attackTimer.Start();
+				velocity.X = jumpDirection.X * jumpForce;
+				velocity.Y = jumpDirection.Y * jumpForce*2;
+			}
+
+			enemy.Velocity = velocity;
+
+			enemy.MoveAndSlide();			
+
+			
+			// GD.Print("Attack. Distance: " + DistanceToPlayer());
+			
+			if(DistanceToPlayer() > 60f)
+			{
+				stateMachine.TransitionTo("MoveToPlayer");
+			}
+		}
+
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public float DistanceToPlayer()
 	{
+		return enemy.GlobalPosition.DistanceTo(player.GlobalPosition);
+	}
+
+	public void OnAttackTimerTimeout() 
+	{
+		canAttack = true;
+		GD.Print("Can attack");
 	}
 }

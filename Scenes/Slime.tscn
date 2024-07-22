@@ -1,10 +1,23 @@
-[gd_scene load_steps=15 format=3 uid="uid://gp2hnhnoqv0u"]
+[gd_scene load_steps=19 format=3 uid="uid://gp2hnhnoqv0u"]
 
 [ext_resource type="Script" path="res://Code/Slime.cs" id="1_6xjqd"]
 [ext_resource type="Texture2D" uid="uid://di7d8ysf184vs" path="res://Assets/sprites/slime_green.png" id="1_ntdu4"]
 [ext_resource type="Script" path="res://Code/State/StateMachine.cs" id="3_ahtjk"]
 [ext_resource type="Script" path="res://Code/State/MoveToPlayer.cs" id="4_s6n41"]
 [ext_resource type="Script" path="res://Code/State/Idle.cs" id="4_w28wr"]
+[ext_resource type="Script" path="res://Code/State/Attack.cs" id="6_u5gfx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8a4tp"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jmoho"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(24, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lc7f3"]
+atlas = ExtResource("1_ntdu4")
+region = Rect2(48, 24, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6kam2"]
 atlas = ExtResource("1_ntdu4")
@@ -32,6 +45,29 @@ region = Rect2(72, 0, 24, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_menpa"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8a4tp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jmoho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jmoho")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lc7f3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lc7f3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8a4tp")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6kam2")
@@ -64,7 +100,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"moving",
-"speed": 10.0
+"speed": 7.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8malq"]
@@ -79,9 +115,9 @@ sprite = NodePath("AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_menpa")
-animation = &"moving"
+animation = &"attack"
 autoplay = "idle"
-frame_progress = 0.403682
+frame_progress = 0.902258
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, 6)
@@ -98,6 +134,17 @@ enemy = NodePath("../..")
 [node name="MoveToPlayer" type="Node2D" parent="StateMachine" node_paths=PackedStringArray("enemy")]
 script = ExtResource("4_s6n41")
 enemy = NodePath("../..")
+movingSpeed = 50.0
+
+[node name="Attack" type="Node2D" parent="StateMachine" node_paths=PackedStringArray("enemy", "attackTimer", "sprite")]
+script = ExtResource("6_u5gfx")
+enemy = NodePath("../..")
+attackTimer = NodePath("AttackTimer")
+sprite = NodePath("../../AnimatedSprite2D")
+
+[node name="AttackTimer" type="Timer" parent="StateMachine/Attack"]
+wait_time = 3.0
+one_shot = true
 
 [node name="PlayerCheck" type="Area2D" parent="."]
 collision_layer = 3
@@ -107,5 +154,6 @@ collision_mask = 2
 position = Vector2(0, -12.5)
 shape = SubResource("RectangleShape2D_yhqej")
 
+[connection signal="timeout" from="StateMachine/Attack/AttackTimer" to="StateMachine/Attack" method="OnAttackTimerTimeout"]
 [connection signal="body_entered" from="PlayerCheck" to="StateMachine/Idle" method="OnPlayerCheckBodyEntered"]
 [connection signal="body_exited" from="PlayerCheck" to="StateMachine/MoveToPlayer" method="OnPlayerCheckBodyExited"]

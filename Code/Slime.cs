@@ -5,15 +5,9 @@ public partial class Slime : CharacterBody2D
 {
 
 	[Export] AnimatedSprite2D sprite;
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
+	public float gravity = ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
+
 
 	//Create a switch thqt connects the states from the state manager to the animations
     public override void _PhysicsProcess(double delta)
@@ -34,5 +28,13 @@ public partial class Slime : CharacterBody2D
 			sprite.Play("moving");
 			sprite.FlipH = true;
 		}
+
+		if(!IsOnFloor())
+		{
+			velocity.Y += gravity * (float)delta;
+		}
+
+		Velocity = velocity;
+		MoveAndSlide();
     }
 }

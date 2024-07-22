@@ -435,4 +435,4 @@ layer_1/tile_data = PackedInt32Array(-655359, 1, 13, -589823, 1, 13, -524287, 1,
 position = Vector2(0, 154)
 
 [node name="Slime" parent="." instance=ExtResource("4_c2tj3")]
-position = Vector2(602, -204)
+position = Vector2(647, -230)
