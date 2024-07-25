@@ -7,6 +7,7 @@ public partial class Knight : CharacterBody2D
 
 	[Export] public float Speed = 150.0f;
 	[Export] public float JumpVelocity = -300.0f;
+	[Export] public float health = 100f;
 
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes.

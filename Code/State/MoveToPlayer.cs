@@ -3,7 +3,7 @@ using System;
 
 public partial class MoveToPlayer : State
 {
-	[Export] CharacterBody2D enemy;
+	Slime enemy;
 	[Export] float movingSpeed = 70f;
 	public Knight player;
 	Vector2 moveDirection;
@@ -11,6 +11,7 @@ public partial class MoveToPlayer : State
 	public override void Enter()
 	{
 		player = stateMachine.player;
+		enemy = stateMachine.slime;
 
 		if(enemy == null)
 		{
@@ -31,6 +32,7 @@ public partial class MoveToPlayer : State
 
 			enemy.Velocity = velocity;
 			enemy.MoveAndSlide();
+			enemy.MovingAnimationController(velocity);
 			
 			///--------
 			// Transition to attack logic

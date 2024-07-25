@@ -3,7 +3,7 @@ using System;
 
 public partial class Idle : State
 {
-	[Export] CharacterBody2D enemy;
+	Slime enemy;
 	[Export] float movingSpeed = 20f;
 
 	Vector2 moveDirection;
@@ -18,6 +18,8 @@ public partial class Idle : State
 
     public override void Enter()
     {
+		enemy = stateMachine.slime;
+
 		GD.Print("Idle entered");
         RandomizeWander();
     }
@@ -40,13 +42,11 @@ public partial class Idle : State
 		{
 			Vector2 velocity = enemy.Velocity;
 
-			if(enemy != null)
-			{
-				velocity.X = moveDirection.X * movingSpeed;
-			}
-
+			velocity.X = moveDirection.X * movingSpeed;
+			
 			enemy.Velocity = velocity;
 			enemy.MoveAndSlide();
+			enemy.MovingAnimationController(velocity);
 		}
     }
 

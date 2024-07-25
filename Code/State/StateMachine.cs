@@ -6,6 +6,8 @@ public partial class StateMachine : Node2D
 {
 	[Export] public NodePath initialState;
 	public Knight player;
+	[Export] public Slime slime;
+	// [Export] public AnimatedSprite2D sprite;
 
 
 	private Dictionary<string, State> States;

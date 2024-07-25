@@ -3,7 +3,7 @@ using System;
 
 public partial class Attack : State
 {
-	[Export] CharacterBody2D enemy;
+	Slime enemy;
 	[Export] float jumpForce = 100f;
 	Knight player;
 	[Export] Timer attackTimer;
@@ -13,6 +13,7 @@ public partial class Attack : State
     public override void Enter()
     {
         player = stateMachine.player;
+		enemy = stateMachine.slime;
 
 		if(enemy == null)
 		{
@@ -41,6 +42,7 @@ public partial class Attack : State
 			}
 
 			enemy.Velocity = velocity;
+			enemy.sprite.Play("attack");
 
 			enemy.MoveAndSlide();			
 

@@ -117,30 +117,26 @@ sprite = NodePath("AnimatedSprite2D")
 sprite_frames = SubResource("SpriteFrames_menpa")
 animation = &"attack"
 autoplay = "idle"
-frame_progress = 0.902258
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-0.5, 6)
 shape = SubResource("RectangleShape2D_8malq")
 
-[node name="StateMachine" type="Node2D" parent="."]
+[node name="StateMachine" type="Node2D" parent="." node_paths=PackedStringArray("slime")]
 script = ExtResource("3_ahtjk")
 initialState = NodePath("Idle")
+slime = NodePath("..")
 
-[node name="Idle" type="Node2D" parent="StateMachine" node_paths=PackedStringArray("enemy")]
+[node name="Idle" type="Node2D" parent="StateMachine"]
 script = ExtResource("4_w28wr")
-enemy = NodePath("../..")
 
-[node name="MoveToPlayer" type="Node2D" parent="StateMachine" node_paths=PackedStringArray("enemy")]
+[node name="MoveToPlayer" type="Node2D" parent="StateMachine"]
 script = ExtResource("4_s6n41")
-enemy = NodePath("../..")
 movingSpeed = 50.0
 
-[node name="Attack" type="Node2D" parent="StateMachine" node_paths=PackedStringArray("enemy", "attackTimer", "sprite")]
+[node name="Attack" type="Node2D" parent="StateMachine" node_paths=PackedStringArray("attackTimer")]
 script = ExtResource("6_u5gfx")
-enemy = NodePath("../..")
 attackTimer = NodePath("AttackTimer")
-sprite = NodePath("../../AnimatedSprite2D")
 
 [node name="AttackTimer" type="Timer" parent="StateMachine/Attack"]
 wait_time = 3.0
